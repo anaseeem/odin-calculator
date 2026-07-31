@@ -21,6 +21,17 @@ const operators = {
   mul: "*",
   div: "/",
 };
+const actions = {
+  ac: "ac",
+  del: "del",
+  prcnt: "%",
+  eq: "=",
+};
+
+const valueTypes = {
+  operator: "operator",
+  number: "number",
+};
 
 const previousDisplay = sel("#previous-operand");
 const currentDisplay = sel("#current-operand");
@@ -31,87 +42,87 @@ const operatorBtns = selA("button[data-operator]");
 
 let currentFlow = [
   {
-    type: "number",
+    type: valueTypes.number,
     value: "1",
   },
   {
-    type: "operator",
+    type: valueTypes.operator,
     value: "+",
   },
   {
-    type: "number",
+    type: valueTypes.number,
     value: "2",
   },
   {
-    type: "operator",
+    type: valueTypes.operator,
     value: "*",
   },
   {
-    type: "number",
+    type: valueTypes.number,
     value: "6",
   },
   {
-    type: "operator",
+    type: valueTypes.operator,
     value: "/",
   },
   {
-    type: "number",
+    type: valueTypes.number,
     value: "9",
   },
   {
-    type: "operator",
+    type: valueTypes.operator,
     value: "+",
   },
   {
-    type: "number",
+    type: valueTypes.number,
     value: "6",
   },
   {
-    type: "operator",
+    type: valueTypes.operator,
     value: "/",
   },
   {
-    type: "number",
+    type: valueTypes.number,
     value: "8",
   },
   {
-    type: "operator",
+    type: valueTypes.operator,
     value: "-",
   },
   {
-    type: "number",
+    type: valueTypes.number,
     value: "5",
   },
   {
-    type: "operator",
+    type: valueTypes.operator,
     value: "+",
   },
   {
-    type: "number",
+    type: valueTypes.number,
     value: "9",
   },
   {
-    type: "operator",
+    type: valueTypes.operator,
     value: "-",
   },
   {
-    type: "number",
+    type: valueTypes.number,
     value: "4",
   },
   {
-    type: "operator",
+    type: valueTypes.operator,
     value: "+",
   },
   {
-    type: "number",
+    type: valueTypes.number,
     value: "8",
   },
   {
-    type: "operator",
+    type: valueTypes.operator,
     value: "*",
   },
   {
-    type: "number",
+    type: valueTypes.number,
     value: "6",
   },
 ];
@@ -126,14 +137,17 @@ function update() {
 
 const insertAction = (action) => {
   switch (action) {
-    case "=":
+    case actions.eq:
       eq();
       break;
-    case "del":
+    case actions.del:
       del();
       break;
-    case "ac":
+    case actions.ac:
       ac();
+      break;
+    case actions.prcnt:
+      percentage();
       break;
     default:
       break;
@@ -176,7 +190,7 @@ function calc() {
 }
 function eq() {
   const ans = calc();
-  currentFlow = [{ type: "number", value: ans.toString() }];
+  currentFlow = [{ type: valueTypes.number, value: ans.toString() }];
   update();
   console.log({ ans });
   return ans;
@@ -184,14 +198,21 @@ function eq() {
 function del() {
   currentFlow.pop();
   if (currentFlow.length === 0) {
-    currentFlow = [{ type: "number", value: "0" }];
+    currentFlow = [{ type: valueTypes.number, value: "0" }];
   }
   update();
   return;
 }
 function ac() {
-  currentFlow = [{ type: "number", value: "0" }];
+  currentFlow = [{ type: valueTypes.number, value: "0" }];
   update();
+
+  return;
+}
+function percentage() {
+  if (currentFlow.length === 0) return;
+  const last = currentFlow[currentFlow.length - 1];
+  if (last.type === valueTypes.operator) update();
 
   return;
 }
@@ -201,7 +222,7 @@ function ac() {
 const insertNumber = (numAsStr) => {
   const lastOperation = currentFlow[currentFlow.length - 1];
 
-  if (lastOperation && lastOperation.type === "number") {
+  if (lastOperation && lastOperation.type === valueTypes.number) {
     if (lastOperation.value === "0") {
       lastOperation.value = "";
     }
@@ -219,7 +240,7 @@ const insertNumber = (numAsStr) => {
     lastOperation.value += numAsStr;
   } else {
     currentFlow.push({
-      type: "number",
+      type: valueTypes.number,
 
       value: numAsStr === "." ? "0." : numAsStr,
     });
@@ -237,14 +258,14 @@ numberBtns.forEach((nBtn) => {
 
 const insertOperator = (op) => {
   const lastOperation = currentFlow[currentFlow.length - 1];
-  if (lastOperation && lastOperation.type === "operator") {
+  if (lastOperation && lastOperation.type === valueTypes.operator) {
     lastOperation.value = op;
   } else {
-    if (lastOperation && lastOperation.type === "number" && lastOperation.value === "0.") {
+    if (lastOperation && lastOperation.type === valueTypes.number && lastOperation.value === "0.") {
       lastOperation.value = "0";
     }
     currentFlow.push({
-      type: "operator",
+      type: valueTypes.operator,
       value: op,
     });
   }
