@@ -148,60 +148,28 @@ actionBtns.forEach((aBtn) => {
 
 // action functions
 function calc() {
-  let ans = 0;
-  const newFlow = [];
-  const divOrMulRange = { start: -1, end: -1 };
-  let inRange = false;
+  const newFlow = [currentFlow[0].value];
   const n = currentFlow.length;
-  const inRangeFn = (i) => {
-    divOrMulRange.end = i;
-    inRange = false;
 
-    let sum = 1;
-    let j = divOrMulRange.start;
-    while (j < divOrMulRange.end) {
-      const item = currentFlow[j];
-      if (item.value === operators.mul || item.value === operators.div) {
-        sum = performOperation(sum, currentFlow[j + 1].value, item.value);
-        j = j + 2;
-      } else {
-        sum = item.value;
-        j = j + 1;
-      }
-    }
-    newFlow.push({ type: "number", value: sum });
-  };
-  for (let i = 0; i < n; i++) {
-    const operation = currentFlow[i];
-    const isMulOrDiv = operation.value === operators.mul || operation.value === operators.div;
-    const isAddOrSub = operation.value === operators.add || operation.value === operators.sub;
-    const isLastItem = i === n - 1;
-
-    if (isMulOrDiv && !inRange) {
-      newFlow.pop();
-      inRange = true;
-      divOrMulRange.start = i - 1;
-    } else if (isAddOrSub) {
-      if (inRange) inRangeFn(i);
-      newFlow.push(currentFlow[i]);
-    } else if (inRange) {
-      if (isLastItem) inRangeFn(i);
+  for (let i = 1; i < n; i += 2) {
+    const operator = currentFlow[i].value;
+    const nextNum = currentFlow[i + 1].value;
+    const isMulOrDiv = operator === operators.mul || operator === operators.div;
+    if (isMulOrDiv) {
+      const prevNum = newFlow.pop();
+      const result = performOperation(prevNum, nextNum, operator);
+      newFlow.push(result);
     } else {
-      newFlow.push(currentFlow[i]);
+      newFlow.push(operator, nextNum);
     }
   }
 
-  for (let i = 0; i < newFlow.length - 1; i++) {
-    const item = newFlow[i];
-    if (item.type === "number") {
-      ans = item.value;
-    } else if (item.value === operators.add) {
-      ans = add(ans, newFlow[i + 1].value);
-      i++;
-    } else {
-      ans = sub(ans, newFlow[i + 1].value);
-      i++;
-    }
+  let ans = newFlow[0];
+
+  for (let i = 1; i < newFlow.length; i += 2) {
+    const operator = newFlow[i];
+    const nextNum = newFlow[i + 1];
+    ans = performOperation(ans, nextNum, operator);
   }
 
   return ans;
