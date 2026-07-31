@@ -43,87 +43,7 @@ const operatorBtns = selA("button[data-operator]");
 let currentFlow = [
   {
     type: valueTypes.number,
-    value: "1",
-  },
-  {
-    type: valueTypes.operator,
-    value: "+",
-  },
-  {
-    type: valueTypes.number,
-    value: "2",
-  },
-  {
-    type: valueTypes.operator,
-    value: "*",
-  },
-  {
-    type: valueTypes.number,
-    value: "6",
-  },
-  {
-    type: valueTypes.operator,
-    value: "/",
-  },
-  {
-    type: valueTypes.number,
-    value: "9",
-  },
-  {
-    type: valueTypes.operator,
-    value: "+",
-  },
-  {
-    type: valueTypes.number,
-    value: "6",
-  },
-  {
-    type: valueTypes.operator,
-    value: "/",
-  },
-  {
-    type: valueTypes.number,
-    value: "8",
-  },
-  {
-    type: valueTypes.operator,
-    value: "-",
-  },
-  {
-    type: valueTypes.number,
-    value: "5",
-  },
-  {
-    type: valueTypes.operator,
-    value: "+",
-  },
-  {
-    type: valueTypes.number,
-    value: "9",
-  },
-  {
-    type: valueTypes.operator,
-    value: "-",
-  },
-  {
-    type: valueTypes.number,
-    value: "4",
-  },
-  {
-    type: valueTypes.operator,
-    value: "+",
-  },
-  {
-    type: valueTypes.number,
-    value: "8",
-  },
-  {
-    type: valueTypes.operator,
-    value: "*",
-  },
-  {
-    type: valueTypes.number,
-    value: "6",
+    value: "10",
   },
 ];
 update();
@@ -161,13 +81,13 @@ actionBtns.forEach((aBtn) => {
 });
 
 // action functions
-function calc() {
-  const newFlow = [currentFlow[0].value];
-  const n = currentFlow.length;
+function calc(flow) {
+  const newFlow = [flow[0].value];
+  const n = flow.length;
 
   for (let i = 1; i < n; i += 2) {
-    const operator = currentFlow[i].value;
-    const nextNum = currentFlow[i + 1].value;
+    const operator = flow[i].value;
+    const nextNum = flow[i + 1].value;
     const isMulOrDiv = operator === operators.mul || operator === operators.div;
     if (isMulOrDiv) {
       const prevNum = newFlow.pop();
@@ -189,7 +109,7 @@ function calc() {
   return ans;
 }
 function eq() {
-  const ans = calc();
+  const ans = calc(currentFlow);
   currentFlow = [{ type: valueTypes.number, value: ans.toString() }];
   update();
   console.log({ ans });
@@ -210,11 +130,20 @@ function ac() {
   return;
 }
 function percentage() {
-  if (currentFlow.length === 0) return;
   const last = currentFlow[currentFlow.length - 1];
-  if (last.type === valueTypes.operator) update();
+  const n = currentFlow.length;
+  if (n === 0 || last.type === valueTypes.operator) return;
+  let sum = n === 1 ? 1 : calc(currentFlow.slice(0, n - 2));
+  const prcnt = parseFloat(last.value) / 100;
+  currentFlow.pop();
+  currentFlow.push({ type: valueTypes.number, value: `${sum * prcnt}` });
 
-  return;
+  return eq();
+  // if (n > 2) {
+  //   sum = performOperation(sum, sum * prcnt, currentFlow[n - 2].value);
+  // } else {
+  //   sum *= prcnt;
+  // }
 }
 
 // end action functions
