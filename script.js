@@ -130,20 +130,20 @@ function ac() {
   return;
 }
 function percentage() {
-  const n = currentFlow.length;
-  const last = currentFlow[n - 1];
+  const last = currentFlow[currentFlow.length - 1];
+  if (!last || last.type === valueTypes.operator) return;
 
-  if (n === 0 || last.type === valueTypes.operator) return;
-
-  let sum = n === 1 ? 1 : calc(currentFlow.slice(0, n - 2));
   const prcnt = parseFloat(last.value) / 100;
+  const lastOp = currentFlow[currentFlow.length - 2]?.value;
+  const isMulOrDiv = lastOp === operators.mul || lastOp === operators.div;
+
+  // Only calculate the preceding sum if we are not multiplying or dividing
+  const value = isMulOrDiv
+    ? prcnt
+    : (currentFlow.length === 1 ? 1 : calc(currentFlow.slice(0, -2))) * prcnt;
+
   currentFlow.pop();
-  const lastOperator = currentFlow[n - 2]?.value;
-  if ((lastOperator && lastOperator === operators.mul) || lastOperator === operators.div) {
-    currentFlow.push({ type: valueTypes.number, value: `${prcnt}` });
-  } else {
-    currentFlow.push({ type: valueTypes.number, value: `${sum * prcnt}` });
-  }
+  currentFlow.push({ type: valueTypes.number, value: `${value}` });
 
   return eq();
 }
