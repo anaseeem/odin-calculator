@@ -176,11 +176,16 @@ function calc() {
 }
 function eq() {
   const ans = calc();
+  currentFlow = [{ type: "number", value: ans.toString() }];
+  update();
   console.log({ ans });
   return ans;
 }
 function del() {
   currentFlow.pop();
+  if (currentFlow.length === 0) {
+    currentFlow = [{ type: "number", value: "0" }];
+  }
   update();
   return;
 }
@@ -199,11 +204,19 @@ const insertNumber = (numAsStr) => {
     if (lastOperation.value === "0") {
       lastOperation.value = "";
     }
+    if (numAsStr === ".") {
+      const lastDecIdx = lastOperation.value.lastIndexOf(".");
+      if (lastDecIdx === -1) {
+        numAsStr = lastOperation.value.length === 0 ? "0." : ".";
+      } else {
+        numAsStr = "";
+      }
+    }
     lastOperation.value += numAsStr;
   } else {
     currentFlow.push({
       type: "number",
-      value: numAsStr,
+      value: numAsStr === "." ? "0." : numAsStr,
     });
   }
   update();
