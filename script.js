@@ -173,22 +173,21 @@ function calc() {
   };
   for (let i = 0; i < n; i++) {
     const operation = currentFlow[i];
+    const isMulOrDiv = operation.value === operators.mul || operation.value === operators.div;
+    const isAddOrSub = operation.value === operators.add || operation.value === operators.sub;
+    const isLastItem = i === n - 1;
 
-    if ((operation.value === operators.mul || operation.value === operators.div) && !inRange) {
+    if (isMulOrDiv && !inRange) {
       newFlow.pop();
       inRange = true;
       divOrMulRange.start = i - 1;
-    } else if (operation.value === operators.add || operation.value === operators.sub) {
-      if (inRange) {
-        inRangeFn(i);
-      }
+    } else if (isAddOrSub) {
+      if (inRange) inRangeFn(i);
       newFlow.push(currentFlow[i]);
+    } else if (inRange) {
+      if (isLastItem) inRangeFn(i);
     } else {
-      if (!inRange) {
-        newFlow.push(currentFlow[i]);
-      } else if (inRange && i === n - 1) {
-        inRangeFn(i);
-      }
+      newFlow.push(currentFlow[i]);
     }
   }
 
