@@ -200,27 +200,34 @@ function ac() {
 
 const insertNumber = (numAsStr) => {
   const lastOperation = currentFlow[currentFlow.length - 1];
+
   if (lastOperation && lastOperation.type === "number") {
     if (lastOperation.value === "0") {
       lastOperation.value = "";
     }
+
     if (numAsStr === ".") {
       const lastDecIdx = lastOperation.value.lastIndexOf(".");
+
       if (lastDecIdx === -1) {
         numAsStr = lastOperation.value.length === 0 ? "0." : ".";
       } else {
         numAsStr = "";
       }
     }
+
     lastOperation.value += numAsStr;
   } else {
     currentFlow.push({
       type: "number",
+
       value: numAsStr === "." ? "0." : numAsStr,
     });
   }
+
   update();
 };
+
 numberBtns.forEach((nBtn) => {
   nBtn.addEventListener("click", (evt) => {
     const number = evt.target.dataset.number;
@@ -233,6 +240,9 @@ const insertOperator = (op) => {
   if (lastOperation && lastOperation.type === "operator") {
     lastOperation.value = op;
   } else {
+    if (lastOperation && lastOperation.type === "number" && lastOperation.value === "0.") {
+      lastOperation.value = "0";
+    }
     currentFlow.push({
       type: "operator",
       value: op,
