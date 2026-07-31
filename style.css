@@ -1,0 +1,168 @@
+/* ==========================================================================
+   Base & Light Mode Variables
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-page: #f1f5f9;
+  --bg-calculator: #ffffff;
+  --bg-display: #f8fafc;
+  --border-color: #e2e8f0;
+
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+
+  --btn-num-bg: #f8fafc;
+  --btn-num-hover: #f1f5f9;
+
+  --btn-action-bg: #e2e8f0;
+  --btn-action-hover: #cbd5e1;
+  --btn-action-text: #334155;
+
+  --btn-op-bg: #e0e7ff;
+  --btn-op-hover: #c7d2fe;
+  --btn-op-text: #4338ca;
+
+  --btn-equals-bg: #4f46e5;
+  --btn-equals-hover: #4338ca;
+  --btn-equals-text: #ffffff;
+
+  --radius-card: 1.5rem;
+  --radius-btn: 0.85rem;
+  --shadow-card: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+/* ==========================================================================
+   Calculator Outer Card
+   ========================================================================== */
+.calculator-card {
+  background-color: var(--bg-calculator);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ==========================================================================
+   Display Screen
+   ========================================================================== */
+.display-container {
+  background-color: var(--bg-display);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-btn);
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-height: 100px;
+  word-break: break-all;
+}
+
+.previous-operand {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  min-height: 1.25rem;
+}
+
+.current-operand {
+  color: var(--text-main);
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/* ==========================================================================
+   Keypad Grid
+   ========================================================================== */
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.65rem;
+}
+
+/* Base Button Styles */
+.btn {
+  font-family: inherit;
+  font-size: 1.25rem;
+  font-weight: 600;
+  height: 60px;
+  border-radius: var(--radius-btn);
+  border: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 0.15s ease-in-out;
+  user-select: none;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+/* Number Buttons */
+.btn-number {
+  background-color: var(--btn-num-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+
+.btn-number:hover {
+  background-color: var(--btn-num-hover);
+}
+
+/* Action Buttons (AC, DEL, %) */
+.btn-action {
+  background-color: var(--btn-action-bg);
+  color: var(--btn-action-text);
+  font-size: 1rem;
+}
+
+.btn-action:hover {
+  background-color: var(--btn-action-hover);
+}
+
+/* Operator Buttons (+, -, ×, ÷) */
+.btn-operator {
+  background-color: var(--btn-op-bg);
+  color: var(--btn-op-text);
+  font-size: 1.4rem;
+}
+
+.btn-operator:hover {
+  background-color: var(--btn-op-hover);
+}
+
+/* Equals Button */
+.btn-equals {
+  background-color: var(--btn-equals-bg);
+  color: var(--btn-equals-text);
+  font-size: 1.4rem;
+}
+
+.btn-equals:hover {
+  background-color: var(--btn-equals-hover);
+}
