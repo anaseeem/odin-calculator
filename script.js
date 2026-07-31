@@ -18,8 +18,8 @@ const selA = (q) => Array.from(document.querySelectorAll(q));
 const operators = {
   add: "+",
   sub: "-",
-  mul: "×",
-  div: "÷",
+  mul: "*",
+  div: "/",
 };
 
 const previousDisplay = sel("#previous-operand");
@@ -29,7 +29,7 @@ const actionBtns = selA("button[data-action]");
 const numberBtns = selA("button[data-number]");
 const operatorBtns = selA("button[data-operator]");
 
-const currentFlow = [
+let currentFlow = [
   {
     type: "number",
     value: "1",
@@ -64,7 +64,55 @@ const currentFlow = [
   },
   {
     type: "number",
-    value: "3",
+    value: "6",
+  },
+  {
+    type: "operator",
+    value: "/",
+  },
+  {
+    type: "number",
+    value: "8",
+  },
+  {
+    type: "operator",
+    value: "-",
+  },
+  {
+    type: "number",
+    value: "5",
+  },
+  {
+    type: "operator",
+    value: "+",
+  },
+  {
+    type: "number",
+    value: "9",
+  },
+  {
+    type: "operator",
+    value: "-",
+  },
+  {
+    type: "number",
+    value: "4",
+  },
+  {
+    type: "operator",
+    value: "+",
+  },
+  {
+    type: "number",
+    value: "8",
+  },
+  {
+    type: "operator",
+    value: "*",
+  },
+  {
+    type: "number",
+    value: "6",
   },
 ];
 update();
@@ -84,6 +132,9 @@ const insertAction = (action) => {
     case "del":
       del();
       break;
+    case "ac":
+      ac();
+      break;
     default:
       break;
   }
@@ -98,23 +149,59 @@ actionBtns.forEach((aBtn) => {
 // action functions
 function calc() {
   let ans = 0;
+  const newFlow = [];
   const divOrMulRange = { start: -1, end: -1 };
   let inRange = false;
   const n = currentFlow.length;
+  const inRangeFn = (i) => {
+    divOrMulRange.end = i;
+    inRange = false;
+
+    let sum = 1;
+    let j = divOrMulRange.start;
+    while (j < divOrMulRange.end) {
+      const item = currentFlow[j];
+      if (item.value === operators.mul || item.value === operators.div) {
+        sum = performOperation(sum, currentFlow[j + 1].value, item.value);
+        j = j + 2;
+      } else {
+        sum = item.value;
+        j = j + 1;
+      }
+    }
+    newFlow.push({ type: "number", value: sum });
+  };
   for (let i = 0; i < n; i++) {
     const operation = currentFlow[i];
-    if (operation.type === "operator") {
-      if (operation.value === operators.mul || operation.value === operators.div) {
-        if (!inRange) {
-          divOrMulRange.start = i - 1;
-          inRange = true;
-        }
-      } else {
-        if (inRange) {
-          divOrMulRange.end = i;
-          inRange = false;
-        }
+
+    if ((operation.value === operators.mul || operation.value === operators.div) && !inRange) {
+      newFlow.pop();
+      inRange = true;
+      divOrMulRange.start = i - 1;
+    } else if (operation.value === operators.add || operation.value === operators.sub) {
+      if (inRange) {
+        inRangeFn(i);
       }
+      newFlow.push(currentFlow[i]);
+    } else {
+      if (!inRange) {
+        newFlow.push(currentFlow[i]);
+      } else if (inRange && i === n - 1) {
+        inRangeFn(i);
+      }
+    }
+  }
+
+  for (let i = 0; i < newFlow.length - 1; i++) {
+    const item = newFlow[i];
+    if (item.type === "number") {
+      ans = item.value;
+    } else if (item.value === operators.add) {
+      ans = add(ans, newFlow[i + 1].value);
+      i++;
+    } else {
+      ans = sub(ans, newFlow[i + 1].value);
+      i++;
     }
   }
 
@@ -128,6 +215,13 @@ function eq() {
 function del() {
   currentFlow.pop();
   update();
+  return;
+}
+function ac() {
+  currentFlow = [{ type: "number", value: "0" }];
+  update();
+
+  return;
 }
 
 // end action functions
@@ -175,7 +269,7 @@ operatorBtns.forEach((oBtn) => {
 
 function numFormat(a) {
   const num = parseFloat(a);
-  if (Number.isNaN) {
+  if (Number.isNaN(num)) {
     throw new Error("Not valid input");
   }
   return num;
@@ -191,11 +285,14 @@ function sub(a, b) {
   return a - b;
 }
 function mul(a, b) {
+  console.log("mul", { a, b });
   a = numFormat(a);
   b = numFormat(b);
   return a * b;
 }
 function div(a, b) {
+  console.log("div", { a, b });
+
   a = numFormat(a);
   b = numFormat(b);
   return a / b;
