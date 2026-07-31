@@ -130,20 +130,22 @@ function ac() {
   return;
 }
 function percentage() {
-  const last = currentFlow[currentFlow.length - 1];
   const n = currentFlow.length;
+  const last = currentFlow[n - 1];
+
   if (n === 0 || last.type === valueTypes.operator) return;
+
   let sum = n === 1 ? 1 : calc(currentFlow.slice(0, n - 2));
   const prcnt = parseFloat(last.value) / 100;
   currentFlow.pop();
-  currentFlow.push({ type: valueTypes.number, value: `${sum * prcnt}` });
+  const lastOperator = currentFlow[n - 2]?.value;
+  if ((lastOperator && lastOperator === operators.mul) || lastOperator === operators.div) {
+    currentFlow.push({ type: valueTypes.number, value: `${prcnt}` });
+  } else {
+    currentFlow.push({ type: valueTypes.number, value: `${sum * prcnt}` });
+  }
 
   return eq();
-  // if (n > 2) {
-  //   sum = performOperation(sum, sum * prcnt, currentFlow[n - 2].value);
-  // } else {
-  //   sum *= prcnt;
-  // }
 }
 
 // end action functions
