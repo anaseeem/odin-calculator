@@ -147,7 +147,8 @@ actionBtns.forEach((aBtn) => {
 });
 
 // action functions
-function calc() {
+
+function eq() {
   const newFlow = [currentFlow[0].value];
   const n = currentFlow.length;
 
@@ -172,11 +173,6 @@ function calc() {
     ans = performOperation(ans, nextNum, operator);
   }
 
-  return ans;
-}
-function eq() {
-  const ans = calc();
-  console.log({ ans });
   return ans;
 }
 function del() {
